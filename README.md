@@ -1,3 +1,5 @@
+Terraform Code Details:
+
 The Terraform code is under the api folder under terraform directory.
 terraform version used 0.12 and above, aws provider version 3.0.0 and above.
 Directory structure of the terraform code:
@@ -32,7 +34,8 @@ When the bootstrap get completed it will used the remote-exec provisioner to cop
 Then we can ran the docker-compose command under the provisioner remote-exec section to build the containers on the ec2.
 
 
-Continous Integration/Continuous delivery:
+Continous Integration/Continuous Delivery:
+
 We can use Jenkins as a CICD tool to do the orchestration of the infrastructure.
 We need to Install the terraform plugin in jenkins.
 Create a Jenkins pipeline with various stages:
