@@ -1,26 +1,50 @@
-### Rules
-- Fork/clone this repo and create your branch for implementing the solution and upon completion upload to github.
-- Complete the challenge within 4 hours, mention time spent in hours explicitly taken for solving the challenge
-- Your solution should be clean, readable, maintainable, and implemented with an emphasis on DevOps methodologies.
-- You are free to use the programming language, tools, and cloud platform of your choice.
-- Provide a description, execution steps, and testing steps in a plain text file (EXECUTION-STEPS.md)
-- We are not looking for completion or perfection, we expect trade-offs to happen.
-- Submit all the codebase, diagrams, and documents
-- Bonus points: For the solutions built with a best security practice
+The Terraform code is under the api folder under terraform directory.
+terraform version used 0.12 and above, aws provider version 3.0.0 and above.
+Directory structure of the terraform code:
+.
+├── main.tf
+├── package.sh
+├── provisioning.tf
+├── terraform.tfvars
+└── variable.tf
+main.tf-->> contains the resource creation code.
 
-### Prerequisites
-* You need a GitHub account to push your branch (submit your solution) to remote.
-* You might need an AWS/Azure/GCP account. Create one if you do not own one already. You can use free-tier resources for this test.
+package.sh -->>is the file contains the packages to be installed on the Instance like Docker and Docker compose which will be used in the userdata.
 
-### Challenge
+Provisioning.tf-->> It is put in a separate file and not associate to any resource,associate them with a null_resource.
+ > Instances of null_resource are treated like normal resources, but they don't do anything. 
+ > Like with any other resource, you can configure provisioners and connection details on a null_resource. 
+ > You can also use its triggers argument and any meta-arguments to control exactly where in the dependency graph its provisioners will run.
+ 
+terraform.tfvars--> Need to define the values of the variables as per the enviornment.
 
-Your fellows of the platform team, backend engineer, and frontend engineer are working separately on a RoR API(with a PostgreSQL DB), a frontend app(using react) and they have created a collaborative monorepo.
+variable.tf -->> Need to define the variables.
 
-- Create the infrastructure for this project using IaC
-    - remember: You are free to use the programming language, tools, and cloud platform of your choice.
+We need to ran the terraform init command first to initialised the terraform files, install the the AWS plugin, read the modules if any also the backend if we defined in the code.
 
-### Expect to be asked these questions in the technical fit.
-- What would you, as the sole member of the DevOps team, do to best support this team now?
-- How would your priorities change as this project matures over time?
-- What about when it starts being used by end-users?
-- What if the DevOps team grew to have three total members?
+Then we do a dry run by running terraform plan this will show what all resources will be provisioned on the cloud.
+
+Ran the terraform apply command to build the infrastructure on the AWS.
+
+Workflow:
+During the apply it will create the instance and during the bootstrap it will ran the userdata and will install Docker, Docker-Compose on the instance.
+When the bootstrap get completed it will used the remote-exec provisioner to copy the docker-compose file to the instance at the /home/ec2-user directory
+Then we can ran the docker-compose command under the provisioner remote-exec section to build the containers on the ec2.
+
+
+Continous Integration/Continuous delivery:
+We can use Jenkins as a CICD tool to do the orchestration of the infrastructure.
+We need to Install the terraform plugin in jenkins.
+Create a Jenkins pipeline with various stages:
+Stage1:
+ repo clone
+Stage2:
+ Create a stage for terraform init
+Stage3:
+ Create a stage for terraform plan which show the dry run result.
+Introduce the input function under this for human intervention whether to proceed or not.
+Stage4:
+ Stage for terraform apply.
+if everything works fine, all stages ran successfully then add notfication stage:
+Stage5:
+Send email notification or chat notification.
