@@ -29,6 +29,7 @@ Then we do a dry run by running terraform plan this will show what all resources
 Ran the terraform apply command to build the infrastructure on the AWS.
 
 Workflow:
+
 During the apply it will create the instance and during the bootstrap it will ran the userdata and will install Docker, Docker-Compose on the instance.
 When the bootstrap get completed it will used the remote-exec provisioner to copy the docker-compose file to the instance at the /home/ec2-user directory
 Then we can ran the docker-compose command under the provisioner remote-exec section to build the containers on the ec2.
